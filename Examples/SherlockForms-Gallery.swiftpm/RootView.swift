@@ -61,13 +61,14 @@ struct RootView: View, SherlockView
         // NOTE:
         // `SherlockForm` and `xxxCell` is where all the search magic is happening!
         // Just treat `SherlockForm` as a normal `Form`, and use `Section` and plain SwiftUI views accordingly.
-        SherlockForm(searchText: $searchText) {
+        //        SherlockForm(searchText: $searchText) {
+        List {
             // Simple form cells.
             Section {
                 // Customized form cell using `vstackCell`.
                 // NOTE: Combination of `SherlockForm` and `ContainerCell` is the secret of `keyword`-based searching.
                 customVStackCell
-
+                
                 // Built-in form cells (using `hstackCell` internally).
                 // See `FormCells` source directory for more info.
                 textCell(icon: Image(systemName: "person.fill"), title: "User", value: username)
@@ -81,7 +82,7 @@ struct RootView: View, SherlockView
                     Text("Tip: Long-press cells to copy!")
                 }
             }
-
+            
             // More form cells
             Section {
                 textFieldCell(icon: Image(systemName: "character.cursor.ibeam"), title: "Editable", value: $username) {
@@ -89,13 +90,13 @@ struct RootView: View, SherlockView
                         .multilineTextAlignment(.trailing)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
-
+                
                 textEditorCell(icon: Image(systemName: "character.cursor.ibeam"), title: "Multiline Editable", value: $username) {
                     $0
                         .multilineTextAlignment(.trailing)
                         .frame(maxHeight: 100)
                 }
-
+                
                 // Array picker cell that uses `languageIntSelection` (index) as state.
                 arrayPickerCell(
                     icon: Image(systemName: "filemenu.and.cursorarrow"),
@@ -109,7 +110,7 @@ struct RootView: View, SherlockView
                     ),
                     values: Constant.languages
                 )
-
+                
                 arrayPickerCell(
                     icon: Image(systemName: "filemenu.and.cursorarrow"),
                     title: "Async Picker",
@@ -127,7 +128,7 @@ struct RootView: View, SherlockView
                     },
                     valueType: String.self
                 )
-
+                
                 sliderCell(
                     icon: Image(systemName: "speedometer"),
                     title: "Speed",
@@ -141,7 +142,7 @@ struct RootView: View, SherlockView
                     maximumValueLabel: { Image(systemName: "hare") },
                     onEditingChanged: { print("onEditingChanged", $0) }
                 )
-
+                
                 stepperCell(
                     icon: Image(systemName: "textformat.size"),
                     title: "Font Size",
@@ -151,7 +152,7 @@ struct RootView: View, SherlockView
                     maxFractionDigits: 0,
                     valueString: { "\($0) pt" }
                 )
-
+                
                 datePickerCell(
                     icon: Image(systemName: "birthday.cake"),
                     title: "Birthday",
@@ -159,7 +160,7 @@ struct RootView: View, SherlockView
                     in: .distantPast ... Date(),
                     displayedComponents: .date
                 )
-
+                
                 datePickerCell(
                     icon: Image(systemName: "alarm"),
                     title: "Alarm",
@@ -169,7 +170,7 @@ struct RootView: View, SherlockView
             } header: {
                 Text("More form cells")
             }
-
+            
             // NOTE:
             // `hstackCell` is useful for more customizable HStack
             // such as manually registering search keywords and configuring context-menu.
@@ -182,7 +183,7 @@ struct RootView: View, SherlockView
                     Spacer(minLength: 16)
                     TextField("Input Email", text: $email)
                 }
-
+                
                 hstackCell {
                     Text("Password").frame(width: 80, alignment: .leading)
                     Spacer(minLength: 16)
@@ -191,7 +192,7 @@ struct RootView: View, SherlockView
             } header: {
                 Text("HStack Cell (More customizable)")
             }
-
+            
             // Navigation Link Cell (`navigationLinkCell`)
             Section {
                 navigationLinkCell(
@@ -214,21 +215,24 @@ struct RootView: View, SherlockView
                     title: "App Info",
                     destination: { AppInfoView() }
                 )
+                navigationLinkCell(icon: Image(systemName: "doc.richtext"), title: "Custom Page", destination: {
+                    CustomView()
+                })
+#if os(iOS)
                 navigationLinkCell(
                     icon: Image(systemName: "iphone"),
                     title: "Device Info",
                     destination: { DeviceInfoView() }
                 )
-                navigationLinkCell(icon: Image(systemName: "doc.richtext"), title: "Custom Page", destination: {
-                    CustomView()
-                })
                 navigationLinkCell(icon: Image(systemName: "doc.richtext"), title: "Custom Page (Recursive)", destination: RootView.init)
-                navigationLinkCell(icon: Image(systemName: "list.bullet"), title: "Simple List", destination: {
-                    ListView()
-                })
-                navigationLinkCell(icon: Image(systemName: "list.bullet.indent"), title: "Nested List", destination: {
-                    NestedListView()
-                })
+                //                navigationLinkCell(icon: Image(systemName: "list.bullet"), title: "Simple List", destination: {
+                //                    ListView()
+                //                })
+                //                navigationLinkCell(icon: Image(systemName: "list.bullet.indent"), title: "Nested List", destination: {
+                //                    NestedListView()
+                //                })
+#endif
+                
             } header: {
                 Text("Navigation Link Cell")
             } footer: {
@@ -236,7 +240,7 @@ struct RootView: View, SherlockView
                     Text("Tip: Custom page (even this page) is just a plain SwiftUI View.")
                 }
             }
-
+            
             // Buttons (`buttonCell`)
             Section {
                 buttonCell(
@@ -247,19 +251,19 @@ struct RootView: View, SherlockView
                         showHUD(.init(message: "Finished resetting UserDefaults"))
                     }
                 )
-
+                
                 buttonCell(
                     icon: Image(systemName: "trash"),
                     title: "Delete Caches",
                     action: {
                         // Fake long task...
                         try await Task.sleep(nanoseconds: 1_000_000_000)
-
+                        
                         try? Helper.deleteAllCaches()
                         showHUD(.init(message: "Finished deleting caches"))
                     }
                 )
-
+                
                 if #available(iOS 15.0, *) {
                     // `buttonCell` with `confirmationDialog`.
                     buttonDialogCell(
@@ -270,7 +274,7 @@ struct RootView: View, SherlockView
                             .init(title: "Delete All Contents", role: .destructive) {
                                 // Fake long task...
                                 try await Task.sleep(nanoseconds: 2_000_000_000)
-
+                                
                                 try? Helper.deleteAllFilesAndCaches()
                                 showHUD(.init(message: "Finished deleting all contents"))
                             },
@@ -292,7 +296,7 @@ struct RootView: View, SherlockView
                     Text("Tip: Last button is ButtonDialog.")
                 }
             }
-
+            
             // Slow motion (`toggleCell`)
             Section {
                 toggleCell(icon: Image(systemName: "figure.roll"), title: "Slow Animation", isOn: $isSlowAnimation)
@@ -311,7 +315,7 @@ struct RootView: View, SherlockView
             } header: {
                 Text("Slow motion")
             }
-
+            
             // Full-Text Search Result:
             // Show navigationLink's search results as well.
             if !searchText.isEmpty {
@@ -324,10 +328,13 @@ struct RootView: View, SherlockView
                     searchText: searchText,
                     sectionHeader: { sectionHeader(prefixes: "App Info", title: $0) }
                 )
+#if os(iOS)
                 DeviceInfoSectionsView(
                     searchText: searchText,
                     sectionHeader: { sectionHeader(prefixes: "Device Info", title: $0) }
                 )
+#endif
+                
             }
         }
         .navigationTitle("Settings")
@@ -337,6 +344,9 @@ struct RootView: View, SherlockView
         .formCellCopyable(true)
         // For aligning icons and texts horizontally.
         .formCellIconWidth(30)
+#if os(macOS)
+        .listStyle(.inset)
+        #endif
     }
 
     /// Customized form cell using `vstackCell`.
@@ -378,12 +388,14 @@ private func sectionHeader(prefixes: String..., title: String) -> String
 @MainActor
 private func setAnimationSpeed(isSlowAnimation: Bool)
 {
+    #if os(iOS)
     if isSlowAnimation {
         Helper.setAnimationSpeed(0.1)
     }
     else {
         Helper.setAnimationSpeed(1)
     }
+    #endif
 }
 
 // MARK: - Previews

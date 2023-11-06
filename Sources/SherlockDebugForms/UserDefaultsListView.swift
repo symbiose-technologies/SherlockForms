@@ -48,7 +48,7 @@ public struct UserDefaultsListView: View
             )
         }
         .navigationTitle("UserDefaults")
-        .navigationBarTitleDisplayMode(.inline)
+        .navBarInline()
     }
 
     // MARK: Inner Types
@@ -284,7 +284,7 @@ public struct UserDefaultsListSectionsView: View, SherlockView
                     .frame(minWidth: 100, maxWidth: 200)
                     .multilineTextAlignment(.trailing)
                     .lineLimit(4)
-                    .keyboardType(.default)
+                    .defaultKeyboard()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
             }
         )
@@ -325,7 +325,7 @@ public struct UserDefaultsListSectionsView: View, SherlockView
                     .onTapGesture { /* Don't let wrapper view to steal this tap */ }
                     .frame(minWidth: 100, maxWidth: 200)
                     .multilineTextAlignment(.trailing)
-                    .keyboardType(.numberPad)
+                    .numberKeyboard()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
             }
         )
@@ -349,7 +349,7 @@ public struct UserDefaultsListSectionsView: View, SherlockView
                     .onTapGesture { /* Don't let wrapper view to steal this tap */ }
                     .frame(minWidth: 100, maxWidth: 200)
                     .multilineTextAlignment(.trailing)
-                    .keyboardType(.decimalPad)
+                    .decimalKeyboard()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
             }
         )
@@ -373,12 +373,17 @@ public struct UserDefaultsListSectionsView: View, SherlockView
                 .frame(maxWidth: .infinity, maxHeight: maxCellHeight)
                 .contentShape(Rectangle()) // Improves tap for empty space.
                 .onTapGesture {
+                    #if os(iOS)
                     if let firstResponder = UIView.currentFirstResponder() {
                         firstResponder.resignFirstResponder()
                     }
                     else {
                         showDetail(key: key)
                     }
+#else
+                    showDetail(key: key)
+                    #endif
+                    
                 }
                 .contextMenu {
                     Button { copyAsString(key) } label: {
@@ -418,7 +423,7 @@ public struct UserDefaultsListSectionsView: View, SherlockView
     {
         let string = String(describing: value)
 
-        UIPasteboard.general.string = string
+        copyStringToClipboard(string)
 
         showHUD(
             .init(
@@ -526,4 +531,17 @@ private final class UserDefaultsNotifier : ObservableObject
         .publisher(for: UserDefaults.didChangeNotification, object: nil)
 
     init() {}
+}
+
+
+
+func copyStringToClipboard(_ string: String)
+{
+#if os(iOS)
+    UIPasteboard.general.string = string
+#elseif os(macOS)
+    let pasteBoard = NSPasteboard.general
+    pasteBoard.clearContents()
+    let pasteSuccess = pasteBoard.writeObjects([string as NSString])
+#endif
 }

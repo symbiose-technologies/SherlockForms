@@ -44,7 +44,7 @@ struct CopyableViewModifier: ViewModifier
 
     private func copyString(_ string: String)
     {
-        UIPasteboard.general.string = string
+        copyStringToClipboard(string)
         
         showHUD(
             .init(
@@ -54,4 +54,16 @@ struct CopyableViewModifier: ViewModifier
             )
         )
     }
+}
+
+
+func copyStringToClipboard(_ string: String)
+{
+#if os(iOS)
+    UIPasteboard.general.string = string
+#elseif os(macOS)
+    let pasteBoard = NSPasteboard.general
+    pasteBoard.clearContents()
+    let pasteSuccess = pasteBoard.writeObjects([string as NSString])
+#endif
 }

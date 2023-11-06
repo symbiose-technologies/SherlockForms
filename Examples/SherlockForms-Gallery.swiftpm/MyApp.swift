@@ -26,6 +26,7 @@ struct MyApp: App
                     RootView()
                 }
             }
+//            .navigationViewStyle(.columns)
             .onAppear {
                 guard isDebug else { return }
 

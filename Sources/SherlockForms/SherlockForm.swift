@@ -36,23 +36,25 @@ public struct SherlockForm<Content: View>: View
     public var body: some View
     {
         let form = formBuilder { content() }
-
-        if #available(iOS 15.0, *) {
-            form
-                .searchable(
-                    text: searchText,
-                    placement: .navigationBarDrawer(displayMode: .automatic),
-                    prompt: Text("Search")
-                )
-                .disableAutocorrection(true)
-                .autocapitalization(.none)
-                .onSubmit(of: .search) {
-                    hideKeyboard()
-                }
-        }
-        else {
-            // FIXME: No searching support for iOS 14 yet.
-            form
-        }
+        form
+            .disableAutocorrection(true)
+        #if os(macOS)
+            .searchable(
+                text: searchText,
+                prompt: Text("Search")
+            )
+        #elseif os(iOS)
+            .searchable(
+                text: searchText,
+                placement: .navigationBarDrawer(displayMode: .automatic),
+                prompt: Text("Search")
+            )
+            .autocapitalization(.none)
+            .onSubmit(of: .search) {
+                hideKeyboard()
+            }
+        #endif
+        
+        
     }
 }

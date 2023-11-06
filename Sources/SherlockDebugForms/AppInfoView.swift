@@ -14,7 +14,7 @@ public struct AppInfoView: View
         }
         .formCellCopyable(true)
         .navigationTitle("App Info")
-        .navigationBarTitleDisplayMode(.inline)
+        .navBarInline()
     }
 }
 

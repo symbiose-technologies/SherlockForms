@@ -1,3 +1,5 @@
+
+#if canImport(UIKit)
 import UIKit
 
 /// Originally from https://github.com/noppefoxwolf/DebugMenu
@@ -177,3 +179,5 @@ public class Device {
         return formatter.string(fromByteCount: Int64(GPU.current.currentAllocatedSize))
     }
 }
+
+#endif

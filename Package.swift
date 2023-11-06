@@ -1,10 +1,14 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.7
+
 
 import PackageDescription
 
 let package = Package(
     name: "SherlockForms",
-    platforms: [.iOS(.v14)], // FIXME: macOS?
+    platforms: [
+      .iOS(.v16),
+      .macOS(.v13)
+    ],
     products: [
         .library(
             name: "SherlockForms",

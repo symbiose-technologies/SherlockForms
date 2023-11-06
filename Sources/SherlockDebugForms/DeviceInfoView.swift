@@ -1,6 +1,7 @@
 import SwiftUI
 import Combine
 
+#if canImport(UIKit)
 /// Screen for presenting Device-level information, e.g. Device name, system version, disk usage.
 public struct DeviceInfoView: View, SherlockView
 {
@@ -15,7 +16,7 @@ public struct DeviceInfoView: View, SherlockView
         }
         .formCellCopyable(true)
         .navigationTitle("Device Info")
-        .navigationBarTitleDisplayMode(.inline)
+        .navBarInline()
     }
 }
 
@@ -68,6 +69,8 @@ public struct DeviceInfoSectionsView: View, SherlockView
         }
     }
 }
+
+#endif
 
 private final class TimerWrapper : ObservableObject
 {

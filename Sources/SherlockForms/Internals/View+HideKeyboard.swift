@@ -1,5 +1,6 @@
 import SwiftUI
 
+#if os(iOS)
 @MainActor
 func hideKeyboard()
 {
@@ -23,3 +24,11 @@ extension UIView
         }
     }
 }
+#elseif os(macOS)
+func hideKeyboard() {
+    //noop
+}
+
+
+
+#endif

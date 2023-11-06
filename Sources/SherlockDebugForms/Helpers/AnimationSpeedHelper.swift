@@ -1,3 +1,5 @@
+
+#if canImport(UIKit)
 import UIKit
 
 extension Helper
@@ -8,3 +10,4 @@ extension Helper
         UIApplication.shared.windows.first?.layer.speed = speed
     }
 }
+#endif

@@ -1,5 +1,71 @@
 import SwiftUI
 
+extension View {
+    
+    func navBarInline(_ isInline: Bool = true) -> some View {
+    #if os(iOS)
+        self
+            .navigationBarTitleDisplayMode(isInline ?  .inline : .large)
+    #else
+        self
+    #endif
+    }
+    
+    
+    /// Set the keyboard type for the view. No-op on macOS
+    func defaultKeyboard() -> some View {
+        #if os(iOS)
+        self
+            .keyboardType(.default)
+        #else
+        self
+        #endif
+    }
+    
+    /// Set the keyboard type for the view. No-op on macOS
+    func numberKeyboard() -> some View {
+        #if os(iOS)
+        self
+            .keyboardType(.numberPad)
+        #else
+        self
+        #endif
+    }
+    
+    
+    
+    /// Set the keyboard type for the view. No-op on macOS
+    func decimalKeyboard() -> some View {
+        #if os(iOS)
+        self
+            .keyboardType(.numberPad)
+        #else
+        self
+        #endif
+    }
+    
+}
+
+extension ToolbarItemPlacement {
+    
+    static func navBarTrail() -> ToolbarItemPlacement {
+        #if os(iOS)
+        return .navigationBarTrailing
+        #else
+        return .navigation
+        #endif
+    }
+    
+    
+    static func btmBar() -> ToolbarItemPlacement {
+        #if os(iOS)
+        return .bottomBar
+        #else
+        return .primaryAction
+        #endif
+    }
+}
+
 /// Single key-value pair viewer for `UserDefaults`.
 struct UserDefaultsItemView: View, SherlockView
 {
@@ -38,15 +104,16 @@ struct UserDefaultsItemView: View, SherlockView
             }
             .formCellCopyable(true)
             .navigationTitle(key)
-            .navigationBarTitleDisplayMode(.inline)
+            .navBarInline()
+            
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .navBarTrail()) {
                     Button(action: { presentationMode.wrappedValue.dismiss() }, label: {
                         Image(systemName: "xmark")
                     })
                 }
 
-                ToolbarItemGroup(placement: .bottomBar) {
+                ToolbarItemGroup(placement: .btmBar()) {
                     if !canEditAsString {
                         Spacer()
                         Button(action: { canEditAsString = true }, label: {

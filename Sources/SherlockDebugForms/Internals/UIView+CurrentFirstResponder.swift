@@ -1,3 +1,6 @@
+
+
+#if canImport(UIKit)
 import UIKit
 
 // Trying to find which text field is active ios
@@ -21,4 +24,4 @@ extension UIView
         Static.responder = self
     }
 }
-
+#endif
